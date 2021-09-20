@@ -21,8 +21,16 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "REDDIT_CLIENT_ID", "\"$REDDIT_CLIENT_ID\""
+            buildConfigField "String", "REDDIT_CLIENT_SECRET", "\"$REDDIT_CLIENT_SECRET\""
+        }
+
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            buildConfigField "String", "REDDIT_CLIENT_ID", "\"$REDDIT_CLIENT_ID\""
+            buildConfigField "String", "REDDIT_CLIENT_SECRET", "\"$REDDIT_CLIENT_SECRET\""
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
