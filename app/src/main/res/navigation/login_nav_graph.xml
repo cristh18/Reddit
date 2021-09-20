@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_nav_graph"
+    app:startDestination="@id/signInFragment">
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.tolodev.reddit.ui.fragments.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signInFragment_to_redditAuthenticationFragment"
+            app:destination="@id/redditAuthenticationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/redditAuthenticationFragment"
+        android:name="com.tolodev.reddit.ui.fragments.RedditAuthenticationFragment"
+        android:label="fragment_reddit_authentication"
+        tools:layout="@layout/fragment_reddit_authentication" />
+</navigation>
