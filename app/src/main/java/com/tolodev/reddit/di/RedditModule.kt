@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.tolodev.reddit.BuildConfig
 import com.tolodev.reddit.managers.RedditPrefsManager
+import com.tolodev.reddit.network.RedditService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -63,7 +64,7 @@ object RedditModule {
     @Provides
     @Singleton
     @RedditInterceptors
-    fun provideDynamicHeaderInterceptor(): Interceptor {
+    fun provideDynamicHeaderInterceptor(redditPrefsManager: RedditPrefsManager): Interceptor {
         return Interceptor { chain ->
             val headers = Headers.Builder()
             val newBuilder = chain.request()
@@ -71,9 +72,9 @@ object RedditModule {
                 .headers(headers.build())
                 .method(chain.request().method, chain.request().body)
 
-//            newBuilder.header(
-//                "Authorization", "Bearer " + BuildConfig.CONTENTFUL_ACCESS_TOKEN
-//            )
+            newBuilder.header(
+                "Authorization", "bearer " + redditPrefsManager.authorizationToken()
+            )
 
             chain.proceed(newBuilder.build())
         }
@@ -88,10 +89,10 @@ object RedditModule {
             .build()
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideRedditsService(@RedditServices retrofit: Retrofit): RedditService =
-//        retrofit.create(RedditService::class.java)
+    @Provides
+    @Singleton
+    fun provideRedditService(@RedditServices retrofit: Retrofit): RedditService =
+        retrofit.create(RedditService::class.java)
 
     @Provides
     @Singleton
