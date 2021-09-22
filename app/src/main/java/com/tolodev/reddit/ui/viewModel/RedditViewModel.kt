@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tolodev.reddit.managers.RedditPrefsManager
 import com.tolodev.reddit.network.api.RedditApi
+import com.tolodev.reddit.network.models.RedditResponse
+import com.tolodev.reddit.ui.models.RedditPost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -26,6 +28,12 @@ class RedditViewModel @Inject constructor(
 
     private val accessToken = MutableLiveData<String>()
 
+    private val redditPosts = MutableLiveData<List<RedditPost>>()
+
+    private val updatingView = MutableLiveData(false)
+
+    private val postViewed = MutableLiveData(false)
+
     init {
         getAuthorizationToken()
         getTop()
@@ -39,15 +47,26 @@ class RedditViewModel @Inject constructor(
         }
     }
 
-    private fun getTop() {
+    fun getTop() {
         disposables.add(
             redditApi.getTop()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe({ Timber.e("Response: ".plus(it)) }, {
-                    Timber.e("Error", it)
-                })
+                .doOnSubscribe { updatingView.postValue(true) }
+                .doFinally { updatingView.postValue(false) }
+                .subscribe(
+                    { redditPosts.postValue(getRedditPosts(it)) },
+                    {
+                        Timber.e(it, "Error")
+                    }
+                )
         )
+    }
+
+    private fun getRedditPosts(redditResponse: RedditResponse): List<RedditPost> {
+        return redditResponse.data.children.map {
+            RedditPost(it.data)
+        }
     }
 
     override fun onCleared() {
@@ -56,4 +75,10 @@ class RedditViewModel @Inject constructor(
     }
 
     fun accessTokenObserver(): LiveData<String> = accessToken
+
+    fun redditPostsObserver(): LiveData<List<RedditPost>> = redditPosts
+
+    fun updatingViewObserver(): LiveData<Boolean> = updatingView
+
+    fun postViewedObserver(): LiveData<Boolean> = postViewed
 }

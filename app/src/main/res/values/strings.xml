@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Reddit</string>
+    <string name="copy_comments">Comments "</string>
+    <string name="copy_ago">ago </string>
 </resources>

@@ -59,9 +59,12 @@ class RedditAuthenticationFragment : Fragment() {
 
     private fun subscribe() {
         with(viewModel) {
-            showAuthorizationScreenObserver().observe(viewLifecycleOwner, {
-                binding?.webViewRedditAuthorization?.loadUrl(it)
-            })
+            showAuthorizationScreenObserver().observe(
+                viewLifecycleOwner,
+                {
+                    binding?.webViewRedditAuthorization?.loadUrl(it)
+                }
+            )
             authenticationStatusObserver().observe(
                 viewLifecycleOwner,
                 {
